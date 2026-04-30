@@ -1,0 +1,85 @@
+{% extends "base.html" %}
+{% block title %}Register - LunaBloom{% endblock %}
+{% block content %}
+
+<section class="page-header">
+    <div class="container">
+        <span class="section-badge">🌸 Join Us</span>
+        <h1>Create Your <span class="text-accent">Account</span></h1>
+        <p>Sign up to book appointments faster</p>
+    </div>
+</section>
+
+<section class="section">
+    <div class="container">
+        <div class="form-wrapper form-wrapper-sm">
+            <form id="registerForm" class="form-card">
+                <h2 class="form-title">Registration</h2>
+
+                <div class="form-group">
+                    <label for="regName">Full Name <span class="required">*</span></label>
+                    <input type="text" id="regName" placeholder="e.g. Maria Santos" required>
+                </div>
+
+                <div class="form-group">
+                    <label for="regEmail">Email Address <span class="required">*</span></label>
+                    <input type="email" id="regEmail" placeholder="e.g. maria@email.com" required>
+                </div>
+
+                <div class="form-group">
+                    <label for="regContact">Contact Number <span class="required">*</span></label>
+                    <input type="tel" id="regContact" placeholder="e.g. 09171234567" required>
+                </div>
+
+                <div class="form-group">
+                    <label for="regPassword">Password <span class="required">*</span></label>
+                    <input type="password" id="regPassword" placeholder="At least 6 characters" required minlength="6">
+                </div>
+
+                <button type="submit" class="btn btn-primary btn-block">Create Account</button>
+
+                <p class="form-footer">Already have an account? <a href="/login">Login here</a></p>
+            </form>
+        </div>
+    </div>
+</section>
+
+{% endblock %}
+
+{% block scripts %}
+<script>
+    document.getElementById('registerForm').addEventListener('submit', async (e) => {
+        e.preventDefault();
+        const btn = e.target.querySelector('button[type="submit"]');
+        btn.disabled = true;
+        btn.textContent = 'Creating...';
+
+        const data = {
+            name: document.getElementById('regName').value,
+            email: document.getElementById('regEmail').value,
+            contact: document.getElementById('regContact').value,
+            password: document.getElementById('regPassword').value
+        };
+
+        try {
+            const res = await fetch('/api/register', {
+                method: 'POST',
+                headers: { 'Content-Type': 'application/json' },
+                body: JSON.stringify(data)
+            });
+            const result = await res.json();
+            if (result.success) {
+                showToast(result.message, 'success');
+                setTimeout(() => window.location.href = '/login', 1500);
+            } else {
+                showToast(result.message, 'error');
+            }
+        } catch (err) {
+            showToast('Something went wrong.', 'error');
+        }
+
+        btn.disabled = false;
+        btn.textContent = 'Create Account';
+    });
+</script>
+{% endblock %}

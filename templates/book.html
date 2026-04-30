@@ -1,0 +1,164 @@
+{% extends "base.html" %}
+{% block title %}Book Appointment - LunaBloom{% endblock %}
+{% block content %}
+
+<section class="page-header">
+    <div class="container">
+        <span class="section-badge">📅 Appointment</span>
+        <h1>Book Your <span class="text-accent">Visit</span></h1>
+        <p>Choose your service and pick a time that works for you</p>
+    </div>
+</section>
+
+<section class="section">
+    <div class="container">
+        <div class="form-wrapper">
+            <form id="bookingForm" class="form-card">
+                <h2 class="form-title">Booking Details</h2>
+
+                <div class="form-row">
+                    <div class="form-group">
+                        <label for="customerName">Full Name <span class="required">*</span></label>
+                        <input type="text" id="customerName" placeholder="e.g. Maria Santos" required
+                            value="{{ session.get('user_name', '') }}">
+                    </div>
+                    <div class="form-group">
+                        <label for="customerEmail">Email</label>
+                        <input type="email" id="customerEmail" placeholder="e.g. maria@email.com"
+                            value="{{ session.get('user_email', '') }}">
+                    </div>
+                </div>
+
+                <div class="form-group">
+                    <label for="service">Service <span class="required">*</span></label>
+                    <select id="service" required>
+                        <option value="">— Pumili ng serbisyo —</option>
+                        <optgroup label="💅 Manicure">
+                            <option value="Classic Manicure - ₱150">Classic Manicure — ₱150</option>
+                            <option value="Gel Manicure - ₱350">Gel Manicure — ₱350</option>
+                            <option value="Spa Manicure - ₱400">Spa Manicure — ₱400</option>
+                            <option value="Gel Removal - ₱100">Gel Removal — ₱100</option>
+                        </optgroup>
+                        <optgroup label="🦶 Pedicure">
+                            <option value="Classic Pedicure - ₱200">Classic Pedicure — ₱200</option>
+                            <option value="Spa Pedicure - ₱450">Spa Pedicure — ₱450</option>
+                            <option value="Foot Spa - ₱300">Foot Spa — ₱300</option>
+                            <option value="Paraffin Pedicure - ₱500">Paraffin Pedicure — ₱500</option>
+                        </optgroup>
+                        <optgroup label="🎨 Nail Art & Extensions">
+                            <option value="Simple Nail Art - ₱200">Simple Nail Art — ₱200</option>
+                            <option value="Intricate Nail Art - ₱500">Intricate Nail Art — ₱500</option>
+                            <option value="Acrylic Extensions - ₱800">Acrylic Extensions — ₱800</option>
+                            <option value="Soft Gel Extensions - ₱1000">Soft Gel Extensions — ₱1,000</option>
+                        </optgroup>
+                        <optgroup label="🎁 Packages">
+                            <option value="Pamper Package - ₱850">Pamper Package — ₱850</option>
+                            <option value="Bridal Package - ₱2500">Bridal Package — ₱2,500</option>
+                            <option value="BFF Duo - ₱900">BFF Duo — ₱900</option>
+                            <option value="Birthday Treat - ₱1000">Birthday Treat — ₱1,000</option>
+                        </optgroup>
+                    </select>
+                </div>
+
+                <div class="form-row">
+                    <div class="form-group">
+                        <label for="date">Preferred Date <span class="required">*</span></label>
+                        <input type="date" id="date" required>
+                    </div>
+                    <div class="form-group">
+                        <label for="time">Preferred Time <span class="required">*</span></label>
+                        <select id="time" required>
+                            <option value="">— Pumili ng oras —</option>
+                            <option value="09:00">9:00 AM</option>
+                            <option value="09:30">9:30 AM</option>
+                            <option value="10:00">10:00 AM</option>
+                            <option value="10:30">10:30 AM</option>
+                            <option value="11:00">11:00 AM</option>
+                            <option value="11:30">11:30 AM</option>
+                            <option value="12:00">12:00 PM</option>
+                            <option value="13:00">1:00 PM</option>
+                            <option value="13:30">1:30 PM</option>
+                            <option value="14:00">2:00 PM</option>
+                            <option value="14:30">2:30 PM</option>
+                            <option value="15:00">3:00 PM</option>
+                            <option value="15:30">3:30 PM</option>
+                            <option value="16:00">4:00 PM</option>
+                            <option value="16:30">4:30 PM</option>
+                            <option value="17:00">5:00 PM</option>
+                            <option value="17:30">5:30 PM</option>
+                            <option value="18:00">6:00 PM</option>
+                            <option value="18:30">6:30 PM</option>
+                            <option value="19:00">7:00 PM</option>
+                        </select>
+                    </div>
+                </div>
+
+                <div class="form-row">
+                    <div class="form-group">
+                        <label for="quantity">Quantity</label>
+                        <input type="number" id="quantity" value="1" min="1" max="10">
+                    </div>
+                </div>
+
+                <div class="form-group">
+                    <label for="notes">Special Requests / Notes</label>
+                    <textarea id="notes" rows="3" placeholder="e.g. French tips, specific color, birthday surprise..."></textarea>
+                </div>
+
+                <button type="submit" class="btn btn-primary btn-block">
+                    Confirm Booking 💅
+                </button>
+            </form>
+        </div>
+    </div>
+</section>
+
+{% endblock %}
+
+{% block scripts %}
+<script>
+    // Set minimum date to today
+    document.getElementById('date').min = new Date().toISOString().split('T')[0];
+
+    document.getElementById('bookingForm').addEventListener('submit', async (e) => {
+        e.preventDefault();
+        const btn = e.target.querySelector('button[type="submit"]');
+        btn.disabled = true;
+        btn.textContent = 'Booking...';
+
+        const data = {
+            customer_name: document.getElementById('customerName').value,
+            customer_email: document.getElementById('customerEmail').value,
+            service: document.getElementById('service').value,
+            date: document.getElementById('date').value,
+            time: document.getElementById('time').value,
+            quantity: document.getElementById('quantity').value,
+            notes: document.getElementById('notes').value
+        };
+
+        try {
+            const res = await fetch('/api/orders', {
+                method: 'POST',
+                headers: { 'Content-Type': 'application/json' },
+                body: JSON.stringify(data)
+            });
+            const result = await res.json();
+            if (result.success) {
+                showToast(result.message, 'success');
+                e.target.reset();
+                // Re-fill name/email if logged in
+                document.getElementById('customerName').value = '{{ session.get("user_name", "") }}';
+                document.getElementById('customerEmail').value = '{{ session.get("user_email", "") }}';
+                document.getElementById('date').min = new Date().toISOString().split('T')[0];
+            } else {
+                showToast(result.message, 'error');
+            }
+        } catch (err) {
+            showToast('Something went wrong. Please try again.', 'error');
+        }
+
+        btn.disabled = false;
+        btn.textContent = 'Confirm Booking 💅';
+    });
+</script>
+{% endblock %}

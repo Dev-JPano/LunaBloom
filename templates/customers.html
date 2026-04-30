@@ -1,0 +1,173 @@
+{% extends "base.html" %}
+{% block title %}Customers - LunaBloom{% endblock %}
+{% block content %}
+
+<section class="page-header">
+    <div class="container">
+        <span class="section-badge">👥 Customer Management</span>
+        <h1>All <span class="text-accent">Customers</span></h1>
+        <p>View and manage registered customers</p>
+    </div>
+</section>
+
+<section class="section">
+    <div class="container">
+        <div class="table-controls">
+            <div class="search-box">
+                <input type="text" id="customerSearch" placeholder="🔍 Search by name, email, or contact..." class="search-input">
+            </div>
+            <span class="record-count" id="customerCount">0 customers</span>
+        </div>
+
+        <div class="table-wrapper">
+            <table class="data-table">
+                <thead>
+                    <tr>
+                        <th>ID</th>
+                        <th>Name</th>
+                        <th>Email</th>
+                        <th>Contact</th>
+                        <th>Registered</th>
+                        <th>Actions</th>
+                    </tr>
+                </thead>
+                <tbody id="customersBody">
+                    <tr><td colspan="6" class="loading">Loading customers...</td></tr>
+                </tbody>
+            </table>
+        </div>
+    </div>
+</section>
+
+<!-- EDIT MODAL -->
+<div class="modal-overlay" id="editCustomerModal">
+    <div class="modal">
+        <div class="modal-header">
+            <h3>Edit Customer</h3>
+            <button class="modal-close" onclick="closeModal('editCustomerModal')">&times;</button>
+        </div>
+        <form id="editCustomerForm">
+            <input type="hidden" id="editCustId">
+            <div class="form-group">
+                <label>Name</label>
+                <input type="text" id="editCustName" required>
+            </div>
+            <div class="form-group">
+                <label>Email</label>
+                <input type="email" id="editCustEmail" required>
+            </div>
+            <div class="form-group">
+                <label>Contact</label>
+                <input type="tel" id="editCustContact" required>
+            </div>
+            <div class="modal-actions">
+                <button type="button" class="btn btn-outline" onclick="closeModal('editCustomerModal')">Cancel</button>
+                <button type="submit" class="btn btn-primary">Save Changes</button>
+            </div>
+        </form>
+    </div>
+</div>
+
+{% endblock %}
+
+{% block scripts %}
+<script>
+    let allCustomers = [];
+
+    async function loadCustomers() {
+        try {
+            const res = await fetch('/api/customers');
+            allCustomers = await res.json();
+            renderCustomers(allCustomers);
+        } catch (err) {
+            document.getElementById('customersBody').innerHTML = '<tr><td colspan="6" class="error">Failed to load</td></tr>';
+        }
+    }
+
+    function renderCustomers(customers) {
+        const tbody = document.getElementById('customersBody');
+        document.getElementById('customerCount').textContent = `${customers.length} customer${customers.length !== 1 ? 's' : ''}`;
+
+        if (customers.length === 0) {
+            tbody.innerHTML = '<tr><td colspan="6" class="empty">No customers found</td></tr>';
+            return;
+        }
+
+        tbody.innerHTML = customers.map(c => `
+            <tr>
+                <td><code>${c.id}</code></td>
+                <td><strong>${c.name}</strong></td>
+                <td>${c.email}</td>
+                <td>${c.contact}</td>
+                <td>${c.date_registered}</td>
+                <td class="action-btns">
+                    <button class="btn-sm btn-edit" onclick="editCustomer('${c.id}', '${c.name}', '${c.email}', '${c.contact}')">✏️</button>
+                    <button class="btn-sm btn-delete" onclick="deleteCustomer('${c.id}', '${c.name}')">🗑️</button>
+                </td>
+            </tr>
+        `).join('');
+    }
+
+    // Search
+    document.getElementById('customerSearch').addEventListener('input', (e) => {
+        const q = e.target.value.toLowerCase();
+        const filtered = allCustomers.filter(c =>
+            c.name.toLowerCase().includes(q) ||
+            c.email.toLowerCase().includes(q) ||
+            c.contact.includes(q)
+        );
+        renderCustomers(filtered);
+    });
+
+    // Edit
+    function editCustomer(id, name, email, contact) {
+        document.getElementById('editCustId').value = id;
+        document.getElementById('editCustName').value = name;
+        document.getElementById('editCustEmail').value = email;
+        document.getElementById('editCustContact').value = contact;
+        openModal('editCustomerModal');
+    }
+
+    document.getElementById('editCustomerForm').addEventListener('submit', async (e) => {
+        e.preventDefault();
+        const id = document.getElementById('editCustId').value;
+        const data = {
+            name: document.getElementById('editCustName').value,
+            email: document.getElementById('editCustEmail').value,
+            contact: document.getElementById('editCustContact').value
+        };
+
+        try {
+            const res = await fetch(`/api/customers/${id}`, {
+                method: 'PUT',
+                headers: { 'Content-Type': 'application/json' },
+                body: JSON.stringify(data)
+            });
+            const result = await res.json();
+            showToast(result.message, result.success ? 'success' : 'error');
+            if (result.success) {
+                closeModal('editCustomerModal');
+                loadCustomers();
+            }
+        } catch (err) {
+            showToast('Update failed.', 'error');
+        }
+    });
+
+    // Delete
+    async function deleteCustomer(id, name) {
+        if (!confirm(`Delete customer "${name}"? This cannot be undone.`)) return;
+        try {
+            const res = await fetch(`/api/customers/${id}`, { method: 'DELETE' });
+            const result = await res.json();
+            showToast(result.message, result.success ? 'success' : 'error');
+            if (result.success) loadCustomers();
+        } catch (err) {
+            showToast('Delete failed.', 'error');
+        }
+    }
+
+    loadCustomers();
+    setInterval(loadCustomers, 10000);
+</script>
+{% endblock %}

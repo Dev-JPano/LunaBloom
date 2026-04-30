@@ -1,0 +1,113 @@
+{% extends "base.html" %}
+{% block title %}LunaBloom Nail Salon - Home{% endblock %}
+{% block content %}
+
+<!-- HERO SECTION -->
+<section class="hero">
+    <div class="hero-content">
+        <span class="hero-badge">✨ Premium Nail Care ✨</span>
+        <h1>Welcome to <span class="text-accent">LunaBloom</span></h1>
+        <p class="hero-sub">Your neighborhood nail salon in the heart of the Philippines. We bring beauty, relaxation, and confidence — one nail at a time. 💅</p>
+        <div class="hero-btns">
+            <a href="/book" class="btn btn-primary">Book Appointment</a>
+            <a href="/services" class="btn btn-outline">View Services</a>
+        </div>
+        <div class="hero-stats">
+            <div class="stat-item">
+                <span class="stat-num">5,000+</span>
+                <span class="stat-label">Happy Clients</span>
+            </div>
+            <div class="stat-item">
+                <span class="stat-num">15+</span>
+                <span class="stat-label">Services</span>
+            </div>
+            <div class="stat-item">
+                <span class="stat-num">4.9⭐</span>
+                <span class="stat-label">Rating</span>
+            </div>
+        </div>
+    </div>
+</section>
+
+<!-- FEATURED SERVICES -->
+<section class="section">
+    <div class="container">
+        <div class="section-header">
+            <span class="section-badge">Our Specialties</span>
+            <h2>Popular Services</h2>
+            <p>Mga paboritong serbisyo ng aming mga kliyente</p>
+        </div>
+        <div class="card-grid">
+            <div class="service-card">
+                <div class="card-icon">💅</div>
+                <h3>Gel Manicure</h3>
+                <p>Long-lasting gel polish that stays perfect for weeks. Chip-free and glossy finish.</p>
+                <span class="card-price">₱350</span>
+            </div>
+            <div class="service-card">
+                <div class="card-icon">🦶</div>
+                <h3>Spa Pedicure</h3>
+                <p>Relaxing foot soak, scrub, massage, and perfect polish. Pure pampering!</p>
+                <span class="card-price">₱450</span>
+            </div>
+            <div class="service-card">
+                <div class="card-icon">🎨</div>
+                <h3>Nail Art</h3>
+                <p>Express yourself with hand-painted designs from simple to intricate masterpieces.</p>
+                <span class="card-price">₱200+</span>
+            </div>
+            <div class="service-card">
+                <div class="card-icon">💎</div>
+                <h3>Nail Extensions</h3>
+                <p>Acrylic or soft gel extensions for the length and shape you've always wanted.</p>
+                <span class="card-price">₱800</span>
+            </div>
+        </div>
+        <div class="text-center mt-2">
+            <a href="/services" class="btn btn-primary">See All Services →</a>
+        </div>
+    </div>
+</section>
+
+<!-- WHY US -->
+<section class="section section-alt">
+    <div class="container">
+        <div class="section-header">
+            <span class="section-badge">Why LunaBloom</span>
+            <h2>Bakit Kami?</h2>
+        </div>
+        <div class="features-grid">
+            <div class="feature-item">
+                <span class="feature-icon">🧼</span>
+                <h4>Hygienic & Safe</h4>
+                <p>All tools are sterilized. Your safety is our top priority.</p>
+            </div>
+            <div class="feature-item">
+                <span class="feature-icon">👩‍🎨</span>
+                <h4>Expert Technicians</h4>
+                <p>Trained professionals with years of experience.</p>
+            </div>
+            <div class="feature-item">
+                <span class="feature-icon">💰</span>
+                <h4>Affordable Prices</h4>
+                <p>Premium quality at prices that won't break the bank.</p>
+            </div>
+            <div class="feature-item">
+                <span class="feature-icon">📱</span>
+                <h4>Easy Booking</h4>
+                <p>Book online anytime, anywhere. No hassle!</p>
+            </div>
+        </div>
+    </div>
+</section>
+
+<!-- CTA -->
+<section class="section cta-section">
+    <div class="container text-center">
+        <h2>Ready to Get Pampered? 🌸</h2>
+        <p>Book your appointment today and experience the LunaBloom difference!</p>
+        <a href="/book" class="btn btn-primary btn-lg">Book Now — It's Free!</a>
+    </div>
+</section>
+
+{% endblock %}
